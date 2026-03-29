@@ -1,0 +1,25 @@
+{
+  "key.categories.mchelper": "MC Helper",
+  "key.mchelper.toggle_coordinates": "切换坐标 HUD",
+  "key.mchelper.toggle_light_overlay": "切换光照叠加层",
+  "key.mchelper.toggle_lookat_info": "切换方块信息",
+  "key.mchelper.toggle_equipment": "切换装备耐久",
+
+  "mchelper.config.coordinates_hud": "坐标 HUD 设置",
+  "mchelper.config.coordinates_hud.show": "显示坐标 HUD",
+  "mchelper.config.coordinates_hud.showDirection": "显示朝向信息",
+  "mchelper.config.coordinates_hud.showBiome": "显示生物群系",
+  "mchelper.config.coordinates_hud.showDimension": "显示维度信息",
+  "mchelper.config.coordinates_hud.posX": "HUD X 坐标",
+  "mchelper.config.coordinates_hud.posY": "HUD Y 坐标",
+
+  "mchelper.config.lookat_info": "方块/实体信息设置",
+  "mchelper.config.lookat_info.show": "显示方块/实体信息",
+
+  "mchelper.config.light_overlay": "光照叠加层设置",
+  "mchelper.config.light_overlay.show": "显示光照叠加层",
+  "mchelper.config.light_overlay.renderDistance": "渲染距离",
+
+  "mchelper.config.equipment_hud": "装备耐久设置",
+  "mchelper.config.equipment_hud.show": "显示装备耐久 HUD"
+}
