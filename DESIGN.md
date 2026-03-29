@@ -1,6 +1,6 @@
 # MC Helper — 设计文档
 
-**版本**: v0.2.0  
+**版本**: v0.3.0  
 **最后更新**: 2026-03-29  
 **技术栈**: Minecraft 1.20.1 + Forge 47.4.18 + Java 17
 
@@ -11,27 +11,28 @@
 ```
 mc_helper/
 ├── src/main/java/com/ksw/mchelper/
-│   ├── MCHelperMod.java              # 模组主类，生命周期入口
-│   ├── ClientEventHandler.java       # 客户端运行时事件（快捷键）
+│   ├── MCHelperMod.java                  # 模组主类，生命周期入口
+│   ├── ClientEventHandler.java           # 快捷键处理（8 个功能开关）
 │   ├── config/
-│   │   └── MCHelperConfig.java       # 配置系统
+│   │   └── MCHelperConfig.java           # 配置系统（16 个配置项）
 │   ├── input/
-│   │   └── KeyBindings.java          # 快捷键定义
+│   │   └── KeyBindings.java              # 8 个快捷键定义
 │   ├── render/
-│   │   ├── CoordinatesHudOverlay.java  # 坐标 HUD（含时间/天气/FPS/内存）
-│   │   ├── LookAtInfoOverlay.java      # 方块/实体信息
-│   │   ├── LightOverlayRenderer.java   # 光照叠加层
-│   │   ├── EquipmentHudOverlay.java    # 装备耐久 HUD
-│   │   ├── MobRadarOverlay.java        # 刷怪检测面板
-│   │   └── MinimapOverlay.java         # 迷你地图
+│   │   ├── CoordinatesHudOverlay.java    # 坐标/时间/天气/FPS/内存 HUD
+│   │   ├── LookAtInfoOverlay.java        # 方块/实体信息
+│   │   ├── LightOverlayRenderer.java     # 光照叠加层
+│   │   ├── EquipmentHudOverlay.java      # 装备耐久 HUD
+│   │   ├── MobRadarOverlay.java          # 刷怪检测面板
+│   │   ├── MinimapOverlay.java           # 迷你地图（异步渲染）
+│   │   ├── CraftingOverlay.java          # 合成查询面板
+│   │   └── BuildingAssistOverlay.java    # 建筑辅助（3D + HUD）
 │   └── util/
-│       └── DirectionUtil.java          # 方向工具
+│       └── DirectionUtil.java            # 方向工具
 └── src/main/resources/
-    ├── META-INF/mods.toml              # 模组元数据
-    ├── assets/mchelper/lang/
-    │   ├── zh_cn.json                  # 中文翻译
-    │   └── en_us.json                  # 英文翻译
-    └── pack.mcmeta                     # 资源包元数据
+    ├── META-INF/mods.toml
+    ├── assets/mchelper/lang/zh_cn.json   # 中文翻译
+    ├── assets/mchelper/lang/en_us.json   # 英文翻译
+    └── pack.mcmeta
 ```
 
 ---
@@ -40,139 +41,127 @@ mc_helper/
 
 ### 2.1 MCHelperMod（主类）
 
-```java
-@Mod(MCHelperMod.MODID)
-public class MCHelperMod {
-    public static final String MODID = "mchelper";
-    private static final LightOverlayRenderer lightOverlayRenderer = new LightOverlayRenderer();
-    private static final MinimapOverlay minimapOverlay = new MinimapOverlay();
-
-    public static LightOverlayRenderer getLightOverlayRenderer();
-    public static MinimapOverlay getMinimapOverlay();
-}
-```
-
-- 注册客户端配置（CLIENT 类型）
-- 向 `MinecraftForge.EVENT_BUS` 注册：`ClientEventHandler`、`LightOverlayRenderer`、`MinimapOverlay`
-- 向 Mod 事件总线注册：6 个 HUD 覆盖层、6 个快捷键
+注册的组件：
+- **Forge EVENT_BUS**：`LightOverlayRenderer`（tick+render）、`MinimapOverlay`（tick+render）、`BuildingAssistOverlay`（render）、`ClientEventHandler`（tick）
+- **HUD 覆盖层**（8 个）：通过 `RegisterGuiOverlaysEvent.registerAboveAll()` 注册
+- **快捷键**（8 个）：通过 `RegisterKeyMappingsEvent` 注册
 
 ### 2.2 MCHelperConfig（配置系统）
 
-配置文件类型为 `CLIENT`，存储在 `.minecraft/config/mchelper-client.toml`。
-
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| coordinates_hud.show | bool | true | 坐标 HUD 开关 |
-| coordinates_hud.showDirection | bool | true | 朝向显示 |
-| coordinates_hud.showBiome | bool | true | 群系显示 |
-| coordinates_hud.showDimension | bool | true | 维度显示 |
-| coordinates_hud.showTimeWeather | bool | true | 时间/天气显示 |
-| coordinates_hud.showPerformance | bool | true | FPS/内存显示 |
-| coordinates_hud.posX | int | 10 | HUD X 坐标 |
-| coordinates_hud.posY | int | 10 | HUD Y 坐标 |
-| lookat_info.show | bool | true | 方块信息开关 |
-| light_overlay.show | bool | false | 光照叠加层开关 |
-| light_overlay.renderDistance | int | 16 | 光照渲染距离 |
-| equipment_hud.show | bool | true | 装备耐久开关 |
-| mob_radar.show | bool | false | 刷怪检测开关 |
-| mob_radar.distance | int | 32 | 检测半径 |
-| minimap.show | bool | false | 迷你地图开关 |
-| minimap.size | int | 100 | 地图尺寸（像素） |
+| 配置项 | 类型 | 默认 |
+|--------|------|------|
+| coordinates_hud.show | bool | true |
+| coordinates_hud.showDirection | bool | true |
+| coordinates_hud.showBiome | bool | true |
+| coordinates_hud.showDimension | bool | true |
+| coordinates_hud.showTimeWeather | bool | true |
+| coordinates_hud.showPerformance | bool | true |
+| coordinates_hud.posX/posY | int | 10 |
+| lookat_info.show | bool | true |
+| light_overlay.show | bool | false |
+| light_overlay.renderDistance | int | 16 |
+| equipment_hud.show | bool | true |
+| mob_radar.show | bool | false |
+| mob_radar.distance | int | 32 |
+| minimap.show | bool | false |
+| minimap.size | int | 100 |
+| crafting.show | bool | false |
+| building_assist.show | bool | false |
 
 ---
 
-## 三、HUD 渲染设计
+## 三、各模块设计
 
-### 3.1 渲染框架
+### 3.1 坐标 HUD（CoordinatesHudOverlay）
 
-所有 HUD 使用 `RegisterGuiOverlaysEvent.registerAboveAll()` 注册为 `IGuiOverlay`。
+动态行数面板，按配置过滤，自适应宽度。时间/天气/FPS/内存数据直接从 `mc.level` 和 `Runtime` 读取，每帧刷新。
 
-**统一视觉风格**：
-- 背景：渐变色（深蓝紫 `0xCC1A1A2E` → 深蓝 `0xCC16213E`）
-- 外边框：深蓝 `0xFF0F3460`，内高亮：紫色 `0xFF533483`
-- HUD 缩放：0.4x（`PoseStack.scale()`，坐标补偿 = 实际坐标 / 0.4）
+### 3.2 方块/实体信息（LookAtInfoOverlay）
 
-### 3.2 坐标 HUD（CoordinatesHudOverlay）
+触发条件：`mc.hitResult` 非 MISS，F3 未开启。  
+光照只显示**方块光照**（`LightLayer.BLOCK`），这是怪物刷怪的实际依据。
 
-扩展显示行（可通过配置开关）：
-- 时间：`level.getDayTime() % 24000` 换算为 HH:MM，`isRaining()`/`isThundering()` 判断天气
-- FPS：`mc.getFps()`，颜色分级
-- 内存：`Runtime.getRuntime().totalMemory() - freeMemory()` / `maxMemory()`
+### 3.3 光照叠加层（LightOverlayRenderer）
 
-### 3.3 方块/实体信息（LookAtInfoOverlay）
+双事件：`ClientTickEvent`（每 10 tick 扫描）+ `RenderLevelStageEvent`（绘制 `debugQuads`）。  
+`forceRefresh` 开启时立即扫描，`clearCache()` 关闭时清空。
 
-光照显示使用 `getBrightness(LightLayer.BLOCK, pos.above())`，只显示**方块光照**（不含天空光照），这才是怪物刷怪的实际判断依据。
+### 3.4 装备耐久 HUD（EquipmentHudOverlay）
 
-### 3.4 光照叠加层（LightOverlayRenderer）
+扫描 6 个槽位，过滤 `isDamageableItem()`，右下角渲染，耐久 < 15% 闪烁。
 
-双事件监听：`ClientTickEvent`（每 10 tick 扫描）+ `RenderLevelStageEvent`（绘制 debugQuads）。  
-`forceRefresh` 标志：开启时立即扫描；`clearCache()` 关闭时清空。
-
-### 3.5 装备耐久 HUD（EquipmentHudOverlay）
-
-扫描 6 个槽位（主手/副手/头盔/胸甲/护腿/靴子），过滤 `isDamageableItem()`，右下角渲染，耐久 < 15% 闪烁。
-
-### 3.6 刷怪检测（MobRadarOverlay）
+### 3.5 刷怪检测（MobRadarOverlay）
 
 ```java
 mc.level.getEntities(player, player.getBoundingBox().inflate(radius),
     e -> e instanceof Monster)
 ```
-按名称统计，降序排列，危险阈值：≥10 红色，≥5 黄色，否则绿色。
+按名称统计，降序排列，危险阈值：≥10 红色，≥5 黄色。
 
-### 3.7 迷你地图（MinimapOverlay）⭐ 性能关键
+### 3.6 迷你地图（MinimapOverlay）⭐
 
-**架构**：异步扫描 + GPU 纹理渲染
+异步扫描 + GPU 纹理，详见 v0.2.0 设计说明。
 
+**NativeImage 格式注意**：`setPixelRGBA` 接受 ABGR，需将 ARGB 的 R/B 通道互换。
+
+### 3.7 合成查询（CraftingOverlay）
+
+**触发条件**：`showCrafting = true` 且手持物品不为空。
+
+**配方查找**：
+```java
+// 1.20.1 中 RecipeManager.getRecipes() 直接返回 Collection<Recipe<?>>
+for (Recipe<?> recipe : manager.getRecipes()) {
+    ItemStack result = recipe.getResultItem(RegistryAccess.EMPTY);
+    if (result.is(item.getItem())) { ... }
+}
 ```
-ClientTickEvent（每 40 tick 或移动 16 格）
-    └─ AtomicBoolean 防重入
-    └─ CompletableFuture.runAsync() ─→ 后台线程
-           └─ scanMap(): 逐列读取 Heightmap + MapColor
-           └─ 结果写入 volatile int[] pendingColors
 
-渲染帧（IGuiOverlay）
-    ├─ 检测 pendingColors 不为 null？
-    │       └─ 主线程上传 NativeImage → DynamicTexture → GPU
-    ├─ guiGraphics.blit(mapTextureId, ...)  ← 一次 draw call
-    ├─ drawPlayerArrow(mc.player.getYRot())  ← 实时，无滞后
-    └─ 坐标文字（mc.player.blockPosition()，实时）
-```
+**支持的配方类型**：
+- `ShapedRecipe`：有序合成，展开为 `gridSize × gridSize` 网格渲染
+- `ShapelessRecipe`：无序合成，铺满 3×3 网格显示
+- `AbstractCookingRecipe`：烧炼（`BlastingRecipe`/`SmokingRecipe`/其他），线性显示输入→输出+经验
 
-**NativeImage 格式**：ABGR（Minecraft 的 `setPixelRGBA` 接受 ABGR），需将 ARGB 转换。
+**渲染**：格子背景 + `renderItem()` 绘制物品图标，与原版合成书风格一致。
 
-**性能对比**：
+### 3.8 建筑辅助（BuildingAssistOverlay）
 
-| 方案 | 主线程开销 | GPU draw call |
-|------|-----------|---------------|
-| 旧（每帧 fill） | 扫描阻塞 + 10000 draw | 10000 次/帧 |
-| 新（异步+纹理） | 近零（仅纹理上传，每 2 秒一次） | 1 次/帧 |
+**3D 渲染**（`RenderLevelStageEvent.AFTER_TRANSLUCENT_BLOCKS`）：
+
+| 元素 | 范围 | 颜色 | 实现 |
+|------|------|------|------|
+| 地面网格 | 玩家脚下 ±8 格 | 白蓝色，alpha=50 | `debugQuads` 细片 |
+| 水平高度线 | 玩家 Y ±12 格 | 青色，alpha=80 | 四边方向各一排线 |
+| 准心方块高亮 | 当前指向方块 | 黄色，alpha=60 | 方块顶面单个 quad |
+
+**HUD 信息**（`IGuiOverlay`）：
+- 右下角显示当前 Y 高度（装备 HUD 上方）
+- 准心指向方块时额外显示目标坐标
 
 ---
 
 ## 四、快捷键系统
 
-| 快捷键对象 | 默认键 | 功能 |
-|-----------|--------|------|
+| 对象 | 默认键 | 功能 |
+|------|--------|------|
 | TOGGLE_COORDINATES | H | 坐标 HUD |
 | TOGGLE_LIGHT_OVERLAY | O | 光照叠加层 |
 | TOGGLE_LOOKAT_INFO | J | 方块/实体信息 |
 | TOGGLE_EQUIPMENT | K | 装备耐久 |
 | TOGGLE_MINIMAP | M | 迷你地图 |
 | TOGGLE_MOB_RADAR | N | 刷怪检测 |
+| TOGGLE_CRAFTING | R | 合成查询 |
+| TOGGLE_BUILDING_ASSIST | B | 建筑辅助 |
 
-> ⚠️ 修改代码默认键位后，需同步修改 `.minecraft/options.txt` 中的 `key_key.mchelper.*` 缓存值。
+> ⚠️ 修改默认键位后需同步更新 `.minecraft/options.txt` 中的 `key_key.mchelper.*` 缓存。
 
 ---
 
 ## 五、构建与部署
 
 ```bash
-# 构建
 export JAVA_HOME=/usr/local/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home
 ./gradlew build --no-daemon -Dnet.minecraftforge.gradle.check.certs=false
-
-# 部署
 cp build/libs/mchelper-0.1.0.jar ~/Games/minecraft/.minecraft/mods/
 ```
 
@@ -182,16 +171,9 @@ cp build/libs/mchelper-0.1.0.jar ~/Games/minecraft/.minecraft/mods/
 
 | 问题 | 说明 |
 |------|------|
-| 光照只显示方块光照 | 方块光照才是怪物刷怪依据，天空光照昼夜均返回 15，不适合显示 |
-| 缩放坐标补偿 | `PoseStack.scale(0.4f)` 后，坐标需 / 0.4 对应屏幕像素 |
-| 快捷键缓存 | 首次加载写入 options.txt，改代码默认值不自动更新 |
-| 迷你地图多线程 | Level 读操作对只读多线程安全；写操作（纹理上传）严格在主线程 |
-
----
-
-## 七、后续开发计划
-
-| 功能 | 优先级 | 说明 |
-|------|--------|------|
-| 合成查询 | P1 | 查询物品合成配方 |
-| 建筑辅助 | P2 | 网格线/水平指示 |
+| 光照只显示方块光照 | 方块光照才是怪物刷怪依据，天空光照昼夜均返回 15 不适合显示 |
+| 缩放坐标补偿 | `scale(0.4f)` 后，HUD 坐标需 ÷ 0.4 才对应屏幕像素 |
+| 快捷键缓存 | 首次加载写入 options.txt，改代码默认值不自动生效 |
+| 迷你地图多线程 | Level 只读操作线程安全；纹理上传严格在主线程 |
+| NativeImage 格式 | `setPixelRGBA` 接受 ABGR，ARGB 需转换（R/B 互换） |
+| 合成 API | 1.20.1 `getRecipes()` 返回 `Collection<Recipe<?>>` |

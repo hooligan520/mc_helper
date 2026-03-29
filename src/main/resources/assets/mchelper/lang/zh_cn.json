@@ -6,6 +6,8 @@
   "key.mchelper.toggle_equipment": "切换装备耐久",
   "key.mchelper.toggle_mob_radar": "切换刷怪检测",
   "key.mchelper.toggle_minimap": "切换迷你地图",
+  "key.mchelper.toggle_crafting": "切换合成查询",
+  "key.mchelper.toggle_building_assist": "切换建筑辅助",
 
   "mchelper.config.coordinates_hud": "坐标 HUD 设置",
   "mchelper.config.coordinates_hud.show": "显示坐标 HUD",
@@ -33,5 +35,11 @@
 
   "mchelper.config.minimap": "迷你地图设置",
   "mchelper.config.minimap.show": "显示迷你地图",
-  "mchelper.config.minimap.size": "地图大小"
+  "mchelper.config.minimap.size": "地图大小",
+
+  "mchelper.config.crafting": "合成查询设置",
+  "mchelper.config.crafting.show": "显示合成查询",
+
+  "mchelper.config.building_assist": "建筑辅助设置",
+  "mchelper.config.building_assist.show": "显示建筑辅助"
 }

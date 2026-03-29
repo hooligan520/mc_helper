@@ -71,4 +71,24 @@ public class KeyBindings {
             GLFW.GLFW_KEY_N,
             CATEGORY
     );
+
+    /**
+     * R 键 — 切换合成查询面板
+     */
+    public static final KeyMapping TOGGLE_CRAFTING = new KeyMapping(
+            "key.mchelper.toggle_crafting",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_R,
+            CATEGORY
+    );
+
+    /**
+     * B 键 — 切换建筑辅助
+     */
+    public static final KeyMapping TOGGLE_BUILDING_ASSIST = new KeyMapping(
+            "key.mchelper.toggle_building_assist",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_B,
+            CATEGORY
+    );
 }

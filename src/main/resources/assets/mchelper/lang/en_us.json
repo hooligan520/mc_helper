@@ -6,6 +6,8 @@
   "key.mchelper.toggle_equipment": "Toggle Equipment HUD",
   "key.mchelper.toggle_mob_radar": "Toggle Mob Radar",
   "key.mchelper.toggle_minimap": "Toggle Minimap",
+  "key.mchelper.toggle_crafting": "Toggle Crafting Lookup",
+  "key.mchelper.toggle_building_assist": "Toggle Building Assist",
 
   "mchelper.config.coordinates_hud": "Coordinates HUD",
   "mchelper.config.coordinates_hud.show": "Show Coordinates HUD",
@@ -33,5 +35,11 @@
 
   "mchelper.config.minimap": "Minimap",
   "mchelper.config.minimap.show": "Show Minimap",
-  "mchelper.config.minimap.size": "Map Size"
+  "mchelper.config.minimap.size": "Map Size",
+
+  "mchelper.config.crafting": "Crafting Lookup",
+  "mchelper.config.crafting.show": "Show Crafting Lookup",
+
+  "mchelper.config.building_assist": "Building Assist",
+  "mchelper.config.building_assist.show": "Show Building Assist"
 }

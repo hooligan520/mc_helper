@@ -3,12 +3,7 @@ package com.ksw.mchelper;
 import com.mojang.logging.LogUtils;
 import com.ksw.mchelper.config.MCHelperConfig;
 import com.ksw.mchelper.input.KeyBindings;
-import com.ksw.mchelper.render.CoordinatesHudOverlay;
-import com.ksw.mchelper.render.EquipmentHudOverlay;
-import com.ksw.mchelper.render.LookAtInfoOverlay;
-import com.ksw.mchelper.render.LightOverlayRenderer;
-import com.ksw.mchelper.render.MobRadarOverlay;
-import com.ksw.mchelper.render.MinimapOverlay;
+import com.ksw.mchelper.render.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
@@ -29,6 +24,7 @@ public class MCHelperMod {
     // 需要同时监听 tick 和 render 事件的渲染器
     private static final LightOverlayRenderer lightOverlayRenderer = new LightOverlayRenderer();
     private static final MinimapOverlay minimapOverlay = new MinimapOverlay();
+    private static final BuildingAssistOverlay buildingAssistOverlay = new BuildingAssistOverlay();
 
     public static LightOverlayRenderer getLightOverlayRenderer() { return lightOverlayRenderer; }
     public static MinimapOverlay getMinimapOverlay() { return minimapOverlay; }
@@ -36,20 +32,16 @@ public class MCHelperMod {
     public MCHelperMod(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
 
-        // 注册客户端配置
         context.registerConfig(ModConfig.Type.CLIENT, MCHelperConfig.SPEC);
 
-        // 注册 Forge 事件总线（用于游戏运行时事件）
         MinecraftForge.EVENT_BUS.register(lightOverlayRenderer);
         MinecraftForge.EVENT_BUS.register(minimapOverlay);
+        MinecraftForge.EVENT_BUS.register(buildingAssistOverlay);
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
 
         LOGGER.info("MC Helper 正在初始化...");
     }
 
-    /**
-     * 客户端事件注册（通过 Mod 事件总线）
-     */
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
 
@@ -65,6 +57,8 @@ public class MCHelperMod {
             event.registerAboveAll("equipment_hud", EquipmentHudOverlay.HUD_EQUIPMENT);
             event.registerAboveAll("mob_radar", MobRadarOverlay.HUD_MOB_RADAR);
             event.registerAboveAll("minimap", MCHelperMod.minimapOverlay.HUD_MINIMAP);
+            event.registerAboveAll("crafting", CraftingOverlay.HUD_CRAFTING);
+            event.registerAboveAll("building_assist", BuildingAssistOverlay.HUD_BUILDING);
             LOGGER.info("MC Helper HUD 覆盖层已注册");
         }
 
@@ -76,6 +70,8 @@ public class MCHelperMod {
             event.register(KeyBindings.TOGGLE_EQUIPMENT);
             event.register(KeyBindings.TOGGLE_MOB_RADAR);
             event.register(KeyBindings.TOGGLE_MINIMAP);
+            event.register(KeyBindings.TOGGLE_CRAFTING);
+            event.register(KeyBindings.TOGGLE_BUILDING_ASSIST);
             LOGGER.info("MC Helper 快捷键已注册");
         }
     }

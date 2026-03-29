@@ -89,5 +89,25 @@ public class ClientEventHandler {
                 true
             );
         }
+
+        // R - 合成查询
+        if (KeyBindings.TOGGLE_CRAFTING.consumeClick()) {
+            boolean newState = !MCHelperConfig.showCrafting;
+            MCHelperConfig.showCrafting = newState;
+            mc.player.displayClientMessage(
+                Component.literal("\u00A7e[MC Helper] \u00A7f合成查询 " + (newState ? "\u00A7a已开启" : "\u00A7c已关闭")),
+                true
+            );
+        }
+
+        // B - 建筑辅助
+        if (KeyBindings.TOGGLE_BUILDING_ASSIST.consumeClick()) {
+            boolean newState = !MCHelperConfig.showBuildingAssist;
+            MCHelperConfig.showBuildingAssist = newState;
+            mc.player.displayClientMessage(
+                Component.literal("\u00A7e[MC Helper] \u00A7f建筑辅助 " + (newState ? "\u00A7a已开启" : "\u00A7c已关闭")),
+                true
+            );
+        }
     }
 }

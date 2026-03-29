@@ -87,6 +87,16 @@ public class MCHelperConfig {
             .comment("迷你地图大小（像素）/ Minimap size in pixels")
             .defineInRange("minimap.size", 100, 60, 200);
 
+    // ==================== 合成查询 ====================
+    private static final ForgeConfigSpec.BooleanValue SHOW_CRAFTING = BUILDER
+            .comment("是否显示合成查询面板 / Show crafting recipe panel")
+            .define("crafting.show", false);
+
+    // ==================== 建筑辅助 ====================
+    private static final ForgeConfigSpec.BooleanValue SHOW_BUILDING_ASSIST = BUILDER
+            .comment("是否显示建筑辅助（网格线+水平线）/ Show building assist overlay")
+            .define("building_assist.show", false);
+
     // ==================== 构建配置 ====================
     public static final ForgeConfigSpec SPEC = BUILDER.build();
 
@@ -111,6 +121,8 @@ public class MCHelperConfig {
     public static int mobRadarDistance;
     public static boolean showMinimap;
     public static int minimapSize;
+    public static boolean showCrafting;
+    public static boolean showBuildingAssist;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
@@ -134,5 +146,7 @@ public class MCHelperConfig {
         mobRadarDistance = MOB_RADAR_DISTANCE.get();
         showMinimap = SHOW_MINIMAP.get();
         minimapSize = MINIMAP_SIZE.get();
+        showCrafting = SHOW_CRAFTING.get();
+        showBuildingAssist = SHOW_BUILDING_ASSIST.get();
     }
 }
