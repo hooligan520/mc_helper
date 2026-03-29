@@ -1,7 +1,7 @@
-package com.suwenkuang.mchelper;
+package com.ksw.mchelper;
 
-import com.suwenkuang.mchelper.config.MCHelperConfig;
-import com.suwenkuang.mchelper.input.KeyBindings;
+import com.ksw.mchelper.config.MCHelperConfig;
+import com.ksw.mchelper.input.KeyBindings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.event.TickEvent;

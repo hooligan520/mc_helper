@@ -1,4 +1,4 @@
-package com.suwenkuang.mchelper.input;
+package com.ksw.mchelper.input;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;

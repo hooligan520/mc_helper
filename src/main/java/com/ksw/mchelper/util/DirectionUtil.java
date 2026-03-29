@@ -1,4 +1,4 @@
-package com.suwenkuang.mchelper.util;
+package com.ksw.mchelper.util;
 
 /**
  * 方向工具类

@@ -1,6 +1,6 @@
-package com.suwenkuang.mchelper.render;
+package com.ksw.mchelper.render;
 
-import com.suwenkuang.mchelper.config.MCHelperConfig;
+import com.ksw.mchelper.config.MCHelperConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;

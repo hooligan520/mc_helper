@@ -1,14 +1,14 @@
-package com.suwenkuang.mchelper;
+package com.ksw.mchelper;
 
 import com.mojang.logging.LogUtils;
-import com.suwenkuang.mchelper.config.MCHelperConfig;
-import com.suwenkuang.mchelper.input.KeyBindings;
-import com.suwenkuang.mchelper.render.CoordinatesHudOverlay;
-import com.suwenkuang.mchelper.render.EquipmentHudOverlay;
-import com.suwenkuang.mchelper.render.LookAtInfoOverlay;
-import com.suwenkuang.mchelper.render.LightOverlayRenderer;
-import com.suwenkuang.mchelper.render.MobRadarOverlay;
-import com.suwenkuang.mchelper.render.MinimapOverlay;
+import com.ksw.mchelper.config.MCHelperConfig;
+import com.ksw.mchelper.input.KeyBindings;
+import com.ksw.mchelper.render.CoordinatesHudOverlay;
+import com.ksw.mchelper.render.EquipmentHudOverlay;
+import com.ksw.mchelper.render.LookAtInfoOverlay;
+import com.ksw.mchelper.render.LightOverlayRenderer;
+import com.ksw.mchelper.render.MobRadarOverlay;
+import com.ksw.mchelper.render.MinimapOverlay;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;

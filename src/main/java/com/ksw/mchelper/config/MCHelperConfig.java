@@ -1,10 +1,10 @@
-package com.suwenkuang.mchelper.config;
+package com.ksw.mchelper.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
-import com.suwenkuang.mchelper.MCHelperMod;
+import com.ksw.mchelper.MCHelperMod;
 
 /**
  * MC Helper 配置类
