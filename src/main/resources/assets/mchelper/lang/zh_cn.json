@@ -4,12 +4,16 @@
   "key.mchelper.toggle_light_overlay": "切换光照叠加层",
   "key.mchelper.toggle_lookat_info": "切换方块信息",
   "key.mchelper.toggle_equipment": "切换装备耐久",
+  "key.mchelper.toggle_mob_radar": "切换刷怪检测",
+  "key.mchelper.toggle_minimap": "切换迷你地图",
 
   "mchelper.config.coordinates_hud": "坐标 HUD 设置",
   "mchelper.config.coordinates_hud.show": "显示坐标 HUD",
   "mchelper.config.coordinates_hud.showDirection": "显示朝向信息",
   "mchelper.config.coordinates_hud.showBiome": "显示生物群系",
   "mchelper.config.coordinates_hud.showDimension": "显示维度信息",
+  "mchelper.config.coordinates_hud.showTimeWeather": "显示游戏时间/天气",
+  "mchelper.config.coordinates_hud.showPerformance": "显示FPS/内存",
   "mchelper.config.coordinates_hud.posX": "HUD X 坐标",
   "mchelper.config.coordinates_hud.posY": "HUD Y 坐标",
 
@@ -21,5 +25,13 @@
   "mchelper.config.light_overlay.renderDistance": "渲染距离",
 
   "mchelper.config.equipment_hud": "装备耐久设置",
-  "mchelper.config.equipment_hud.show": "显示装备耐久 HUD"
+  "mchelper.config.equipment_hud.show": "显示装备耐久 HUD",
+
+  "mchelper.config.mob_radar": "刷怪检测设置",
+  "mchelper.config.mob_radar.show": "显示刷怪检测",
+  "mchelper.config.mob_radar.distance": "检测半径",
+
+  "mchelper.config.minimap": "迷你地图设置",
+  "mchelper.config.minimap.show": "显示迷你地图",
+  "mchelper.config.minimap.size": "地图大小"
 }

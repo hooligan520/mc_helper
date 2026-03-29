@@ -64,5 +64,30 @@ public class ClientEventHandler {
                 true
             );
         }
+
+        // M - 刷怪检测
+        if (KeyBindings.TOGGLE_MOB_RADAR.consumeClick()) {
+            boolean newState = !MCHelperConfig.showMobRadar;
+            MCHelperConfig.showMobRadar = newState;
+            mc.player.displayClientMessage(
+                Component.literal("\u00A7e[MC Helper] \u00A7f刷怪检测 " + (newState ? "\u00A7a已开启" : "\u00A7c已关闭")),
+                true
+            );
+        }
+
+        // N - 迷你地图
+        if (KeyBindings.TOGGLE_MINIMAP.consumeClick()) {
+            boolean newState = !MCHelperConfig.showMinimap;
+            MCHelperConfig.showMinimap = newState;
+            if (newState) {
+                MCHelperMod.getMinimapOverlay().requestRefresh();
+            } else {
+                MCHelperMod.getMinimapOverlay().clearCache();
+            }
+            mc.player.displayClientMessage(
+                Component.literal("\u00A7e[MC Helper] \u00A7f迷你地图 " + (newState ? "\u00A7a已开启" : "\u00A7c已关闭")),
+                true
+            );
+        }
     }
 }

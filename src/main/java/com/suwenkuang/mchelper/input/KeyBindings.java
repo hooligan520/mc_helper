@@ -51,4 +51,24 @@ public class KeyBindings {
             GLFW.GLFW_KEY_K,
             CATEGORY
     );
+
+    /**
+     * M 键 — 切换迷你地图
+     */
+    public static final KeyMapping TOGGLE_MINIMAP = new KeyMapping(
+            "key.mchelper.toggle_minimap",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_M,
+            CATEGORY
+    );
+
+    /**
+     * N 键 — 切换刷怪检测面板
+     */
+    public static final KeyMapping TOGGLE_MOB_RADAR = new KeyMapping(
+            "key.mchelper.toggle_mob_radar",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_N,
+            CATEGORY
+    );
 }

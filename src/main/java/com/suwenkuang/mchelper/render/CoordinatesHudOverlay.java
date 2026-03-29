@@ -46,6 +46,8 @@ public class CoordinatesHudOverlay {
     private static final String ICON_DIR = "\u2794 ";        // ➔ 方向
     private static final String ICON_BIOME = "\u2618 ";      // ☘ 群系
     private static final String ICON_DIM = "\u2726 ";        // ✦ 维度
+    private static final String ICON_TIME = "\u263D ";       // ☽ 时间
+    private static final String ICON_FPS = "\u25B6 ";        // ▶ 性能
 
     public static final IGuiOverlay HUD_COORDINATES = (ForgeGui gui, GuiGraphics guiGraphics,
                                                          float partialTick, int screenWidth, int screenHeight) -> {
@@ -95,6 +97,32 @@ public class CoordinatesHudOverlay {
         if (MCHelperConfig.showDimension) {
             String dimName = getDimensionDisplayName(mc.level.dimension());
             lines.add(new String[]{ICON_DIM + "维度", dimName});
+        }
+
+        // 游戏时间 & 天气
+        if (MCHelperConfig.showTimeWeather) {
+            long dayTime = mc.level.getDayTime() % 24000L;
+            int hour = (int) ((dayTime + 6000) / 1000) % 24;
+            int minute = (int) (((dayTime + 6000) % 1000) * 60 / 1000);
+            String timeStr = String.format("%02d:%02d", hour, minute);
+            String period = (hour >= 6 && hour < 18) ? "§e白天" : "§9夜晚";
+            // 天气判断
+            String weather;
+            if (mc.level.isThundering()) weather = "§8⚡雷暴";
+            else if (mc.level.isRaining()) weather = "§b☂雨天";
+            else weather = "§f☀晴天";
+            lines.add(new String[]{ICON_TIME + "时间", timeStr + " " + period + " §7" + weather});
+        }
+
+        // FPS & 内存
+        if (MCHelperConfig.showPerformance) {
+            int fps = mc.getFps();
+            String fpsColor = fps >= 60 ? "§a" : (fps >= 30 ? "§e" : "§c");
+            long maxMem = Runtime.getRuntime().maxMemory() / 1024 / 1024;
+            long usedMem = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024;
+            String memColor = usedMem * 100 / maxMem > 80 ? "§c" : (usedMem * 100 / maxMem > 60 ? "§e" : "§a");
+            lines.add(new String[]{ICON_FPS + "性能",
+                    fpsColor + fps + " §7FPS  " + memColor + usedMem + "§7/" + maxMem + "MB"});
         }
 
         // 计算自适应宽度

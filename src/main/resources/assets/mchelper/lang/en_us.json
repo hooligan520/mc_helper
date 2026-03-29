@@ -4,22 +4,34 @@
   "key.mchelper.toggle_light_overlay": "Toggle Light Overlay",
   "key.mchelper.toggle_lookat_info": "Toggle Block Info",
   "key.mchelper.toggle_equipment": "Toggle Equipment HUD",
+  "key.mchelper.toggle_mob_radar": "Toggle Mob Radar",
+  "key.mchelper.toggle_minimap": "Toggle Minimap",
 
-  "mchelper.config.coordinates_hud": "Coordinates HUD Settings",
+  "mchelper.config.coordinates_hud": "Coordinates HUD",
   "mchelper.config.coordinates_hud.show": "Show Coordinates HUD",
   "mchelper.config.coordinates_hud.showDirection": "Show Direction",
   "mchelper.config.coordinates_hud.showBiome": "Show Biome",
   "mchelper.config.coordinates_hud.showDimension": "Show Dimension",
+  "mchelper.config.coordinates_hud.showTimeWeather": "Show Time/Weather",
+  "mchelper.config.coordinates_hud.showPerformance": "Show FPS/Memory",
   "mchelper.config.coordinates_hud.posX": "HUD X Position",
   "mchelper.config.coordinates_hud.posY": "HUD Y Position",
 
-  "mchelper.config.lookat_info": "Look-at Info Settings",
+  "mchelper.config.lookat_info": "Block/Entity Info",
   "mchelper.config.lookat_info.show": "Show Block/Entity Info",
 
-  "mchelper.config.light_overlay": "Light Overlay Settings",
+  "mchelper.config.light_overlay": "Light Overlay",
   "mchelper.config.light_overlay.show": "Show Light Overlay",
   "mchelper.config.light_overlay.renderDistance": "Render Distance",
 
-  "mchelper.config.equipment_hud": "Equipment HUD Settings",
-  "mchelper.config.equipment_hud.show": "Show Equipment Durability HUD"
+  "mchelper.config.equipment_hud": "Equipment HUD",
+  "mchelper.config.equipment_hud.show": "Show Equipment HUD",
+
+  "mchelper.config.mob_radar": "Mob Radar",
+  "mchelper.config.mob_radar.show": "Show Mob Radar",
+  "mchelper.config.mob_radar.distance": "Detection Radius",
+
+  "mchelper.config.minimap": "Minimap",
+  "mchelper.config.minimap.show": "Show Minimap",
+  "mchelper.config.minimap.size": "Map Size"
 }

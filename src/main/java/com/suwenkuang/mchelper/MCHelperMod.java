@@ -7,6 +7,8 @@ import com.suwenkuang.mchelper.render.CoordinatesHudOverlay;
 import com.suwenkuang.mchelper.render.EquipmentHudOverlay;
 import com.suwenkuang.mchelper.render.LookAtInfoOverlay;
 import com.suwenkuang.mchelper.render.LightOverlayRenderer;
+import com.suwenkuang.mchelper.render.MobRadarOverlay;
+import com.suwenkuang.mchelper.render.MinimapOverlay;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
@@ -24,12 +26,12 @@ public class MCHelperMod {
     public static final String MODID = "mchelper";
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    // LightOverlayRenderer 需要同时监听 tick 和 render 事件
+    // 需要同时监听 tick 和 render 事件的渲染器
     private static final LightOverlayRenderer lightOverlayRenderer = new LightOverlayRenderer();
+    private static final MinimapOverlay minimapOverlay = new MinimapOverlay();
 
-    public static LightOverlayRenderer getLightOverlayRenderer() {
-        return lightOverlayRenderer;
-    }
+    public static LightOverlayRenderer getLightOverlayRenderer() { return lightOverlayRenderer; }
+    public static MinimapOverlay getMinimapOverlay() { return minimapOverlay; }
 
     public MCHelperMod(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
@@ -39,6 +41,7 @@ public class MCHelperMod {
 
         // 注册 Forge 事件总线（用于游戏运行时事件）
         MinecraftForge.EVENT_BUS.register(lightOverlayRenderer);
+        MinecraftForge.EVENT_BUS.register(minimapOverlay);
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
 
         LOGGER.info("MC Helper 正在初始化...");
@@ -57,12 +60,11 @@ public class MCHelperMod {
 
         @SubscribeEvent
         public static void registerOverlays(RegisterGuiOverlaysEvent event) {
-            // 注册坐标 HUD 覆盖层
             event.registerAboveAll("coordinates_hud", CoordinatesHudOverlay.HUD_COORDINATES);
-            // 注册方块/实体信息覆盖层
             event.registerAboveAll("lookat_info", LookAtInfoOverlay.HUD_LOOKAT);
-            // 注册装备耐久 HUD 覆盖层
             event.registerAboveAll("equipment_hud", EquipmentHudOverlay.HUD_EQUIPMENT);
+            event.registerAboveAll("mob_radar", MobRadarOverlay.HUD_MOB_RADAR);
+            event.registerAboveAll("minimap", MCHelperMod.minimapOverlay.HUD_MINIMAP);
             LOGGER.info("MC Helper HUD 覆盖层已注册");
         }
 
@@ -72,6 +74,8 @@ public class MCHelperMod {
             event.register(KeyBindings.TOGGLE_LIGHT_OVERLAY);
             event.register(KeyBindings.TOGGLE_LOOKAT_INFO);
             event.register(KeyBindings.TOGGLE_EQUIPMENT);
+            event.register(KeyBindings.TOGGLE_MOB_RADAR);
+            event.register(KeyBindings.TOGGLE_MINIMAP);
             LOGGER.info("MC Helper 快捷键已注册");
         }
     }

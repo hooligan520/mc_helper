@@ -59,6 +59,34 @@ public class MCHelperConfig {
             .comment("是否显示装备耐久 HUD / Show equipment durability HUD")
             .define("equipment_hud.show", true);
 
+    // ==================== 时间/天气显示 ====================
+    private static final ForgeConfigSpec.BooleanValue SHOW_TIME_WEATHER = BUILDER
+            .comment("是否在坐标 HUD 中显示游戏时间和天气 / Show time and weather in HUD")
+            .define("coordinates_hud.showTimeWeather", true);
+
+    // ==================== 性能监控 ====================
+    private static final ForgeConfigSpec.BooleanValue SHOW_PERFORMANCE = BUILDER
+            .comment("是否在坐标 HUD 中显示 FPS 和内存 / Show FPS and memory in HUD")
+            .define("coordinates_hud.showPerformance", true);
+
+    // ==================== 刷怪检测 ====================
+    private static final ForgeConfigSpec.BooleanValue SHOW_MOB_RADAR = BUILDER
+            .comment("是否显示刷怪检测面板 / Show mob radar")
+            .define("mob_radar.show", false);
+
+    private static final ForgeConfigSpec.IntValue MOB_RADAR_DISTANCE = BUILDER
+            .comment("刷怪检测半径（方块数）/ Mob radar detection radius")
+            .defineInRange("mob_radar.distance", 32, 8, 128);
+
+    // ==================== 迷你地图 ====================
+    private static final ForgeConfigSpec.BooleanValue SHOW_MINIMAP = BUILDER
+            .comment("是否显示迷你地图 / Show minimap")
+            .define("minimap.show", false);
+
+    private static final ForgeConfigSpec.IntValue MINIMAP_SIZE = BUILDER
+            .comment("迷你地图大小（像素）/ Minimap size in pixels")
+            .defineInRange("minimap.size", 100, 60, 200);
+
     // ==================== 构建配置 ====================
     public static final ForgeConfigSpec SPEC = BUILDER.build();
 
@@ -77,6 +105,13 @@ public class MCHelperConfig {
 
     public static boolean showEquipmentHud;
 
+    public static boolean showTimeWeather;
+    public static boolean showPerformance;
+    public static boolean showMobRadar;
+    public static int mobRadarDistance;
+    public static boolean showMinimap;
+    public static int minimapSize;
+
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
         showCoordinates = SHOW_COORDINATES.get();
@@ -92,5 +127,12 @@ public class MCHelperConfig {
         lightRenderDistance = LIGHT_RENDER_DISTANCE.get();
 
         showEquipmentHud = SHOW_EQUIPMENT_HUD.get();
+
+        showTimeWeather = SHOW_TIME_WEATHER.get();
+        showPerformance = SHOW_PERFORMANCE.get();
+        showMobRadar = SHOW_MOB_RADAR.get();
+        mobRadarDistance = MOB_RADAR_DISTANCE.get();
+        showMinimap = SHOW_MINIMAP.get();
+        minimapSize = MINIMAP_SIZE.get();
     }
 }
