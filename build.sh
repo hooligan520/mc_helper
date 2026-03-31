@@ -1,13 +1,14 @@
 #!/bin/bash
 # MC Helper 多版本构建脚本
 # 用法：./build.sh <mc_target>
-#   mc_target 可选值：mc1_20_1 | mc1_21_1 | mc1_21_4 | mc1_21_11
+#   mc_target 可选值：mc1_20_1 | mc1_21_1 | mc1_21_4 | mc1_21_11 | mc26_1
 #
 # 示例：
 #   ./build.sh mc1_20_1    # 构建 1.20.1 版本（需要 JDK 17）
 #   ./build.sh mc1_21_1    # 构建 1.21.1 版本（需要 JDK 21）
 #   ./build.sh mc1_21_4    # 构建 1.21.4 版本（需要 JDK 21）
 #   ./build.sh mc1_21_11   # 构建 1.21.11 版本（需要 JDK 21）
+#   ./build.sh mc26_1      # 构建 26.1 版本（Java 25 由 Gradle toolchain 自动下载）
 
 set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -31,9 +32,20 @@ case "$MC_TARGET" in
       exit 1
     fi
     ;;
+  mc26_1)
+    BUILD_TEMPLATE="build.gradle.fg7"
+    WRAPPER_FILE="gradle/wrapper/gradle-wrapper-fg7.properties"
+    # 26.1 需要 Java 25，由 Gradle toolchain 自动下载，使用系统 JDK 启动 Gradle 即可
+    JDK_PATH="/tmp/jdk21-arm64/Contents/Home"
+    if [ ! -d "$JDK_PATH" ]; then
+      echo "错误：需要 JDK 21+ 启动 Gradle（Java 25 由 toolchain 自动下载）"
+      echo "请先解压 JDK 21 arm64 到 /tmp/jdk21-arm64/"
+      exit 1
+    fi
+    ;;
   *)
     echo "未知的 mc_target: $MC_TARGET"
-    echo "可选值: mc1_20_1 | mc1_21_1 | mc1_21_4 | mc1_21_11"
+    echo "可选值: mc1_20_1 | mc1_21_1 | mc1_21_4 | mc1_21_11 | mc26_1"
     exit 1
     ;;
 esac
