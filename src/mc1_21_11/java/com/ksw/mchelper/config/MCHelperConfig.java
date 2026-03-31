@@ -1,16 +1,15 @@
 package com.ksw.mchelper.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
-import com.ksw.mchelper.MCHelperMod;
 
 /**
  * MC Helper 配置类
  * 使用 Forge 的 ForgeConfigSpec 系统，配置文件为 TOML 格式
  */
-@Mod.EventBusSubscriber(modid = MCHelperMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = "mchelper", bus = Mod.EventBusSubscriber.Bus.MOD)
 public class MCHelperConfig {
 
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();

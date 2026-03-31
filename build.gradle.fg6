@@ -1,0 +1,186 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+}
+
+// ============================================================
+// 多版本 Source Set 配置
+// 使用方式：
+//   ./gradlew build -Pmc_target=mc1_20_1   → 构建 1.20.1 版本 (需要 JDK 17)
+//   ./gradlew build -Pmc_target=mc1_21_4   → 构建 1.21.4 版本 (需要 JDK 21)
+//   ./gradlew build -Pmc_target=mc1_21_11  → 构建 1.21.11 版本 (需要 JDK 21)
+//
+// 默认（不传参数）：使用 gradle.properties 里的版本（当前为 1.20.1）
+// ============================================================
+
+def mcTarget = project.hasProperty('mc_target') ? project.mc_target : 'mc1_20_1'
+
+// 各版本配置表
+def versionConfigs = [
+    mc1_20_1 : [
+        minecraft_version       : '1.20.1',
+        minecraft_version_range : '[1.20.1,1.21)',
+        forge_version           : '47.4.18',
+        forge_version_range     : '[47,)',
+        loader_version_range    : '[47,)',
+        mapping_version         : '1.20.1',
+        java_version            : 17,
+        jar_suffix              : 'mc1.20.1',
+    ],
+    mc1_21_4 : [
+        minecraft_version       : '1.21.4',
+        minecraft_version_range : '[1.21.4,1.22)',
+        forge_version           : '54.1.16',
+        forge_version_range     : '[54,)',
+        loader_version_range    : '[54,)',
+        mapping_version         : '1.21.4',
+        java_version            : 21,
+        jar_suffix              : 'mc1.21.4',
+    ],
+    mc1_21_11: [
+        minecraft_version       : '1.21.11',
+        minecraft_version_range : '[1.21.11,1.22)',
+        forge_version           : '61.1.5',
+        forge_version_range     : '[61,)',
+        loader_version_range    : '[61,)',
+        mapping_version         : '1.21.11',
+        java_version            : 21,
+        jar_suffix              : 'mc1.21.11',
+    ],
+]
+
+if (!versionConfigs.containsKey(mcTarget)) {
+    throw new GradleException("未知的 mc_target: '${mcTarget}'，可选值: ${versionConfigs.keySet()}")
+}
+
+def vc = versionConfigs[mcTarget]
+println ">>> 构建目标: ${mcTarget} | MC: ${vc.minecraft_version} | Forge: ${vc.forge_version} | Java: ${vc.java_version}"
+
+// 注入版本参数（覆盖 gradle.properties 中的值）
+ext.minecraft_version       = vc.minecraft_version
+ext.minecraft_version_range = vc.minecraft_version_range
+ext.forge_version           = vc.forge_version
+ext.forge_version_range     = vc.forge_version_range
+ext.loader_version_range    = vc.loader_version_range
+ext.mapping_version         = vc.mapping_version
+
+version = "${mod_version}-${vc.jar_suffix}"
+group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(vc.java_version)
+
+// 注册版本特定的 Source Set
+sourceSets {
+    // 版本特定代码：仅编译当前 mc_target 对应的目录
+    versionSpecific {
+        java.srcDirs = ["src/${mcTarget}/java"]
+        resources.srcDirs = ["src/${mcTarget}/resources"]
+    }
+}
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+    copyIdeResources = true
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                "${mod_id}" {
+                    // 合并 main（共享）+ versionSpecific（版本特定）两个 source set
+                    sources sourceSets.main, sourceSets.versionSpecific
+                }
+            }
+        }
+        client {
+            property 'forge.enabledGameTestNamespaces', mod_id
+        }
+        server {
+            property 'forge.enabledGameTestNamespaces', mod_id
+            args '--nogui'
+        }
+    }
+}
+
+// 让 versionSpecific 编译时能看到 main 的类（config / util）
+// 同时继承 main 的所有编译依赖（包含 Minecraft/Forge API）
+sourceSets.versionSpecific.compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+sourceSets.versionSpecific.runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+
+repositories {}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+}
+
+// processResources 处理版本特定的 mods.toml
+tasks.named('processResources', ProcessResources).configure {
+    // 同时处理 main/resources 和 versionSpecific/resources
+    // 版本特定的文件（mods.toml / pack.mcmeta）优先于共享文件
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from sourceSets.main.resources
+    from sourceSets.versionSpecific.resources
+
+    var replaceProperties = [
+        minecraft_version      : minecraft_version,
+        minecraft_version_range: minecraft_version_range,
+        forge_version          : forge_version,
+        forge_version_range    : forge_version_range,
+        loader_version_range   : loader_version_range,
+        mod_id                 : mod_id,
+        mod_name               : mod_name,
+        mod_license            : mod_license,
+        mod_version            : mod_version,
+        mod_authors            : mod_authors,
+        mod_description        : mod_description,
+    ]
+    inputs.properties replaceProperties
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+// jar 同时包含 main 和 versionSpecific 的编译结果
+tasks.named('jar', Jar).configure {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from sourceSets.main.output
+    from sourceSets.versionSpecific.output
+
+    manifest {
+        attributes([
+            'Specification-Title'     : mod_id,
+            'Specification-Vendor'    : mod_authors,
+            'Specification-Version'   : '1',
+            'Implementation-Title'    : project.name,
+            'Implementation-Version'  : project.jar.archiveVersion,
+            'Implementation-Vendor'   : mod_authors,
+            'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+        ])
+    }
+    finalizedBy 'reobfJar'
+}
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
