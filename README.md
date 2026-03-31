@@ -3,6 +3,7 @@
 **一个轻量级 Minecraft 客户端辅助模组，让你告别频繁按 F3**
 
 ![Minecraft 1.20.1](https://img.shields.io/badge/Minecraft-1.20.1-green)
+![Minecraft 1.21.1](https://img.shields.io/badge/Minecraft-1.21.1-brightgreen)
 ![Minecraft 1.21.4](https://img.shields.io/badge/Minecraft-1.21.4-brightgreen)
 ![Minecraft 1.21.11](https://img.shields.io/badge/Minecraft-1.21.11-brightgreen)
 ![Forge](https://img.shields.io/badge/Forge-多版本-orange)
@@ -96,6 +97,7 @@
 | MC 版本 | Forge | Java |
 |---------|-------|------|
 | **1.20.1** | 47.4.18 | 17 |
+| **1.21.1** | 52.1.14 | 21 |
 | **1.21.4** | 54.1.16 | 21 |
 | **1.21.11** | 61.1.5 | 21 |
 
@@ -106,6 +108,7 @@
 1. 根据你的 Minecraft 版本安装对应的 Forge（通过 HMCL、MultiMC 等启动器）
 2. 从 [Releases](https://github.com/hooligan520/mc_helper/releases) 下载对应版本的 jar：
    - `mchelper-x.x.x-mc1.20.1.jar` → 1.20.1
+   - `mchelper-x.x.x-mc1.21.1.jar` → 1.21.1
    - `mchelper-x.x.x-mc1.21.4.jar` → 1.21.4
    - `mchelper-x.x.x-mc1.21.11.jar` → 1.21.11
 3. 放入 `.minecraft/mods/` 目录
@@ -127,6 +130,9 @@ cd mc_helper
 ```bash
 # 构建 1.20.1 版本（需要 JDK 17）
 ./build.sh mc1_20_1
+
+# 构建 1.21.1 版本（需要 JDK 21）
+./build.sh mc1_21_1
 
 # 构建 1.21.4 版本（需要 JDK 21）
 ./build.sh mc1_21_4
@@ -175,8 +181,7 @@ build.sh           # 统一构建入口
 - [x] 刷怪检测
 - [x] 合成配方查询
 - [x] 建筑辅助（网格线 + 水平线 + 方块高亮）
-- [x] 多版本支持（1.20.1 / 1.21.4 / 1.21.11）
-- [ ] 支持 1.21.1（Forge 52.1.14）
+- [x] 多版本支持（1.20.1 / 1.21.1 / 1.21.4 / 1.21.11）
 - [ ] 支持 26.1（Forge 62.0.8）
 
 ---
