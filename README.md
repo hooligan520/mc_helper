@@ -2,9 +2,11 @@
 
 **一个轻量级 Minecraft 客户端辅助模组，让你告别频繁按 F3**
 
-![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1-green)
-![Forge](https://img.shields.io/badge/Forge-47.4.18-orange)
-![Java](https://img.shields.io/badge/Java-17-blue)
+![Minecraft 1.20.1](https://img.shields.io/badge/Minecraft-1.20.1-green)
+![Minecraft 1.21.4](https://img.shields.io/badge/Minecraft-1.21.4-brightgreen)
+![Minecraft 1.21.11](https://img.shields.io/badge/Minecraft-1.21.11-brightgreen)
+![Forge](https://img.shields.io/badge/Forge-多版本-orange)
+![Java](https://img.shields.io/badge/Java-17%20%7C%2021-blue)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
 ---
@@ -61,6 +63,7 @@
 - 无序合成
 - 烧炼配方（熔炉 / 高炉 / 烟熏炉，显示经验值）
 - 多个配方时显示第一种并标注总数量
+- ⚠️ 仅支持单人模式（多人服务器暂不支持）
 
 ### 🏗️ 建筑辅助（B 键切换）
 
@@ -88,10 +91,23 @@
 
 ---
 
+## 🌍 支持版本
+
+| MC 版本 | Forge | Java |
+|---------|-------|------|
+| **1.20.1** | 47.4.18 | 17 |
+| **1.21.4** | 54.1.16 | 21 |
+| **1.21.11** | 61.1.5 | 21 |
+
+---
+
 ## 📦 安装方法
 
-1. 安装 **Forge 1.20.1-47.x.x**（通过 HMCL、MultiMC 等启动器）
-2. 从 [Releases](https://github.com/hooligan520/mc_helper/releases) 下载最新 `mchelper-x.x.x.jar`
+1. 根据你的 Minecraft 版本安装对应的 Forge（通过 HMCL、MultiMC 等启动器）
+2. 从 [Releases](https://github.com/hooligan520/mc_helper/releases) 下载对应版本的 jar：
+   - `mchelper-x.x.x-mc1.20.1.jar` → 1.20.1
+   - `mchelper-x.x.x-mc1.21.4.jar` → 1.21.4
+   - `mchelper-x.x.x-mc1.21.11.jar` → 1.21.11
 3. 放入 `.minecraft/mods/` 目录
 4. 启动游戏即可
 
@@ -99,12 +115,40 @@
 
 ## 🔨 自行构建
 
+克隆仓库（`main` 分支，包含所有版本代码）：
+
 ```bash
 git clone https://github.com/hooligan520/mc_helper.git
 cd mc_helper
-export JAVA_HOME=/path/to/jdk17
-./gradlew build --no-daemon
-# 输出：build/libs/mchelper-x.x.x.jar
+```
+
+使用统一构建脚本，按目标版本传参：
+
+```bash
+# 构建 1.20.1 版本（需要 JDK 17）
+./build.sh mc1_20_1
+
+# 构建 1.21.4 版本（需要 JDK 21）
+./build.sh mc1_21_4
+
+# 构建 1.21.11 版本（需要 JDK 21）
+./build.sh mc1_21_11
+```
+
+构建产物在 `build/libs/` 目录下，文件名含版本后缀（如 `mchelper-0.1.0-mc1.21.11.jar`）。
+
+### 项目结构
+
+```
+src/
+├── main/          # 共享代码（工具类 + 翻译文件）
+├── mc1_20_1/      # 1.20.1 专用代码
+├── mc1_21_4/      # 1.21.4 专用代码
+└── mc1_21_11/     # 1.21.11 专用代码
+
+build.gradle.fg6   # ForgeGradle 6 配置（1.20.1）
+build.gradle.fg7   # ForgeGradle 7 配置（1.21.4 / 1.21.11）
+build.sh           # 统一构建入口
 ```
 
 ---
@@ -131,6 +175,9 @@ export JAVA_HOME=/path/to/jdk17
 - [x] 刷怪检测
 - [x] 合成配方查询
 - [x] 建筑辅助（网格线 + 水平线 + 方块高亮）
+- [x] 多版本支持（1.20.1 / 1.21.4 / 1.21.11）
+- [ ] 支持 1.21.1（Forge 52.1.14）
+- [ ] 支持 26.1（Forge 62.0.8）
 
 ---
 
