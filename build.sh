@@ -1,10 +1,11 @@
 #!/bin/bash
 # MC Helper 多版本构建脚本
 # 用法：./build.sh <mc_target>
-#   mc_target 可选值：mc1_20_1 | mc1_21_4 | mc1_21_11
+#   mc_target 可选值：mc1_20_1 | mc1_21_1 | mc1_21_4 | mc1_21_11
 #
 # 示例：
 #   ./build.sh mc1_20_1    # 构建 1.20.1 版本（需要 JDK 17）
+#   ./build.sh mc1_21_1    # 构建 1.21.1 版本（需要 JDK 21）
 #   ./build.sh mc1_21_4    # 构建 1.21.4 版本（需要 JDK 21）
 #   ./build.sh mc1_21_11   # 构建 1.21.11 版本（需要 JDK 21）
 
@@ -20,7 +21,7 @@ case "$MC_TARGET" in
     WRAPPER_FILE="gradle/wrapper/gradle-wrapper-fg6.properties"
     JDK_PATH="/usr/local/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"
     ;;
-  mc1_21_4|mc1_21_11)
+  mc1_21_1|mc1_21_4|mc1_21_11)
     BUILD_TEMPLATE="build.gradle.fg7"
     WRAPPER_FILE="gradle/wrapper/gradle-wrapper-fg7.properties"
     JDK_PATH="/tmp/jdk21-arm64/Contents/Home"
@@ -32,7 +33,7 @@ case "$MC_TARGET" in
     ;;
   *)
     echo "未知的 mc_target: $MC_TARGET"
-    echo "可选值: mc1_20_1 | mc1_21_4 | mc1_21_11"
+    echo "可选值: mc1_20_1 | mc1_21_1 | mc1_21_4 | mc1_21_11"
     exit 1
     ;;
 esac
