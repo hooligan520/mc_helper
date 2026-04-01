@@ -22,6 +22,7 @@ def versionConfigs = [
         forge_version_range     : '[52,)',
         loader_version_range    : '[52,)',
         jar_suffix              : 'mc1.21.1',
+        java_version            : 21,
     ],
     mc1_21_4 : [
         minecraft_version       : '1.21.4',
@@ -30,6 +31,7 @@ def versionConfigs = [
         forge_version_range     : '[54,)',
         loader_version_range    : '[54,)',
         jar_suffix              : 'mc1.21.4',
+        java_version            : 21,
     ],
     mc1_21_11: [
         minecraft_version       : '1.21.11',
@@ -38,6 +40,16 @@ def versionConfigs = [
         forge_version_range     : '[61,)',
         loader_version_range    : '[61,)',
         jar_suffix              : 'mc1.21.11',
+        java_version            : 21,
+    ],
+    mc26_1   : [
+        minecraft_version       : '26.1',
+        minecraft_version_range : '[26.1,27)',
+        forge_version           : '62.0.9',
+        forge_version_range     : '[62,)',
+        loader_version_range    : '[62,)',
+        jar_suffix              : 'mc26.1',
+        java_version            : 25,
     ],
 ]
 
@@ -58,7 +70,7 @@ ext.loader_version_range    = vc.loader_version_range
 version = "${mod_version}-${vc.jar_suffix}"
 group = "${mod_group_id}"
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java.toolchain.languageVersion = JavaLanguageVersion.of(vc.java_version ?: 21)
 
 // 注册版本特定 Source Set
 sourceSets {

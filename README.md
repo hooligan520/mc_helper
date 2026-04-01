@@ -6,6 +6,7 @@
 ![Minecraft 1.21.1](https://img.shields.io/badge/Minecraft-1.21.1-brightgreen)
 ![Minecraft 1.21.4](https://img.shields.io/badge/Minecraft-1.21.4-brightgreen)
 ![Minecraft 1.21.11](https://img.shields.io/badge/Minecraft-1.21.11-brightgreen)
+![Minecraft 26.1](https://img.shields.io/badge/Minecraft-26.1-blue)
 ![Forge](https://img.shields.io/badge/Forge-多版本-orange)
 ![Java](https://img.shields.io/badge/Java-17%20%7C%2021-blue)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
@@ -100,6 +101,7 @@
 | **1.21.1** | 52.1.14 | 21 |
 | **1.21.4** | 54.1.16 | 21 |
 | **1.21.11** | 61.1.5 | 21 |
+| **26.1** | 62.0.9 | 25 |
 
 ---
 
@@ -111,6 +113,7 @@
    - `mchelper-x.x.x-mc1.21.1.jar` → 1.21.1
    - `mchelper-x.x.x-mc1.21.4.jar` → 1.21.4
    - `mchelper-x.x.x-mc1.21.11.jar` → 1.21.11
+   - `mchelper-x.x.x-mc26.1.jar` → 26.1
 3. 放入 `.minecraft/mods/` 目录
 4. 启动游戏即可
 
@@ -139,6 +142,9 @@ cd mc_helper
 
 # 构建 1.21.11 版本（需要 JDK 21）
 ./build.sh mc1_21_11
+
+# 构建 26.1 版本（需要 JDK 21+，Java 25 由 Gradle toolchain 自动下载）
+./build.sh mc26_1
 ```
 
 构建产物在 `build/libs/` 目录下，文件名含版本后缀（如 `mchelper-0.1.0-mc1.21.11.jar`）。
@@ -181,8 +187,7 @@ build.sh           # 统一构建入口
 - [x] 刷怪检测
 - [x] 合成配方查询
 - [x] 建筑辅助（网格线 + 水平线 + 方块高亮）
-- [x] 多版本支持（1.20.1 / 1.21.1 / 1.21.4 / 1.21.11）
-- [ ] 支持 26.1（Forge 62.0.8）
+- [x] 多版本支持（1.20.1 / 1.21.1 / 1.21.4 / 1.21.11 / 26.1）
 
 ---
 
