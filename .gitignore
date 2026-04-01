@@ -17,6 +17,9 @@ out
 build
 .gradle
 
+# build.gradle 是 build.sh 运行时从 build.gradle.fg6/fg7 复制生成的临时文件，不纳入版本管理
+build.gradle
+
 # other
 eclipse
 run
