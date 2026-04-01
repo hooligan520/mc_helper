@@ -1,0 +1,74 @@
+name: MC Helper CI/CD
+
+on:
+  push:
+    branches: [ "main", "master" ]
+    tags: [ "v*" ]  # 推送 v* tag 时触发发布
+  pull_request:
+
+jobs:
+  # 1. 编译任务：并行构建所有 MC 版本
+  build:
+    name: Build ${{ matrix.mc_target }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { mc_target: mc1_20_1,  java: '17', template: build.gradle.fg6, wrapper: gradle/wrapper/gradle-wrapper-fg6.properties }
+          - { mc_target: mc1_21_1,  java: '21', template: build.gradle.fg7, wrapper: gradle/wrapper/gradle-wrapper-fg7.properties }
+          - { mc_target: mc1_21_4,  java: '21', template: build.gradle.fg7, wrapper: gradle/wrapper/gradle-wrapper-fg7.properties }
+          - { mc_target: mc1_21_11, java: '21', template: build.gradle.fg7, wrapper: gradle/wrapper/gradle-wrapper-fg7.properties }
+          - { mc_target: mc26_1,    java: '25', template: build.gradle.fg7, wrapper: gradle/wrapper/gradle-wrapper-fg7.properties }
+          # 注意：mc26_1 需要 Java 25 编译，直接在 CI 安装，避免 Gradle toolchain 自动下载
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Build with Gradle
+        run: |
+          cp ${{ matrix.template }} build.gradle
+          cp ${{ matrix.wrapper }} gradle/wrapper/gradle-wrapper.properties
+          chmod +x gradlew
+          ./gradlew build -Pmc_target=${{ matrix.mc_target }} --no-daemon
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          # 每个版本上传到独立命名的路径，防止 release 阶段合并冲突
+          name: jars-${{ matrix.mc_target }}
+          path: build/libs/*.jar
+
+  # 2. 发布任务：仅在推送 Tag 时运行
+  release:
+    name: Create Release
+    needs: build  # 必须等待所有编译任务成功
+    if: startsWith(github.ref, 'refs/tags/v')  # 仅在 v* tag 时执行
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 赋予创建 Release 的权限
+
+    steps:
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-jars
+          pattern: jars-*        # 下载所有以 jars- 开头的构建产物
+          merge-multiple: true   # 将所有文件合并到同一目录
+
+      - name: Display Files
+        run: ls -R all-jars/
+
+      - name: Release to GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          files: all-jars/*.jar           # 上传所有 jar
+          generate_release_notes: true    # 自动生成基于提交记录的更新日志
+          token: ${{ secrets.GITHUB_TOKEN }}
