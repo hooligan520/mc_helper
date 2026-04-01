@@ -16,32 +16,52 @@ cd "$SCRIPT_DIR"
 
 MC_TARGET="${1:-mc1_20_1}"
 
+# brew 安装的 JDK 路径（支持 Intel 和 Apple Silicon）
+JDK17_BREW="/usr/local/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"
+JDK21_BREW="/usr/local/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home"
+# Apple Silicon 路径
+JDK17_BREW_ARM="/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"
+JDK21_BREW_ARM="/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home"
+
+find_jdk() {
+  local version=$1
+  local intel_path jdk_arm_path
+  if [ "$version" = "17" ]; then
+    intel_path="$JDK17_BREW"
+    jdk_arm_path="$JDK17_BREW_ARM"
+  else
+    intel_path="$JDK21_BREW"
+    jdk_arm_path="$JDK21_BREW_ARM"
+  fi
+
+  if [ -d "$intel_path" ]; then
+    echo "$intel_path"
+  elif [ -d "$jdk_arm_path" ]; then
+    echo "$jdk_arm_path"
+  else
+    echo ""
+  fi
+}
+
 case "$MC_TARGET" in
   mc1_20_1)
     BUILD_TEMPLATE="build.gradle.fg6"
     WRAPPER_FILE="gradle/wrapper/gradle-wrapper-fg6.properties"
-    JDK_PATH="/usr/local/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"
-    ;;
-  mc1_21_1|mc1_21_4|mc1_21_11)
-    BUILD_TEMPLATE="build.gradle.fg7"
-    WRAPPER_FILE="gradle/wrapper/gradle-wrapper-fg7.properties"
-    JDK_PATH="/tmp/jdk21-arm64/Contents/Home"
-    if [ ! -d "$JDK_PATH" ]; then
-      echo "错误：JDK 21 不存在于 $JDK_PATH"
-      echo "请先解压 JDK 21 arm64 到 /tmp/jdk21-arm64/"
+    JDK_PATH="$(find_jdk 17)"
+    if [ -z "$JDK_PATH" ]; then
+      echo "错误：找不到 JDK 17，请通过 brew 安装：brew install openjdk@17"
       exit 1
     fi
     ;;
-  mc26_1)
+  mc1_21_1|mc1_21_4|mc1_21_11|mc26_1)
     BUILD_TEMPLATE="build.gradle.fg7"
     WRAPPER_FILE="gradle/wrapper/gradle-wrapper-fg7.properties"
-    # 26.1 需要 Java 25，由 Gradle toolchain 自动下载，使用系统 JDK 启动 Gradle 即可
-    JDK_PATH="/tmp/jdk21-arm64/Contents/Home"
-    if [ ! -d "$JDK_PATH" ]; then
-      echo "错误：需要 JDK 21+ 启动 Gradle（Java 25 由 toolchain 自动下载）"
-      echo "请先解压 JDK 21 arm64 到 /tmp/jdk21-arm64/"
+    JDK_PATH="$(find_jdk 21)"
+    if [ -z "$JDK_PATH" ]; then
+      echo "错误：找不到 JDK 21，请通过 brew 安装：brew install openjdk@21"
       exit 1
     fi
+    # mc26_1 编译需要 Java 25，由 Gradle toolchain 自动下载，JDK 21 仅用于启动 Gradle
     ;;
   *)
     echo "未知的 mc_target: $MC_TARGET"
@@ -52,18 +72,13 @@ esac
 
 export JAVA_HOME="$JDK_PATH"
 
-# 备份当前 build.gradle，替换为目标版本的模板
-BUILD_BACKUP="build.gradle.backup.$$"
-cp build.gradle "$BUILD_BACKUP"
-cp "$BUILD_TEMPLATE" build.gradle
-
 # 切换 Gradle wrapper
 cp "$WRAPPER_FILE" gradle/wrapper/gradle-wrapper.properties
 
-# 确保在任何情况下都恢复 build.gradle
+# build.gradle 是 .gitignore 中的临时文件，构建前从模板复制，构建后清除
+cp "$BUILD_TEMPLATE" build.gradle
 cleanup() {
-    cp "$BUILD_BACKUP" build.gradle
-    rm -f "$BUILD_BACKUP"
+    rm -f build.gradle
 }
 trap cleanup EXIT
 
